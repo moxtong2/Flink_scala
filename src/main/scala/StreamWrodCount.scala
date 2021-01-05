@@ -38,5 +38,7 @@ object StreamWrodCount {
    // 需要在 环境中做一个配置 --host 127.0.0.1 --port 7777  启动命令参数中配置
 
 
+    //flink 分布式架构带来的乱序问题
+
   }
 }
