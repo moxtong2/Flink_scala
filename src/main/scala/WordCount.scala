@@ -1,9 +1,12 @@
 import org.apache.flink.api.scala.{DataSet, ExecutionEnvironment, createTypeInformation}
 
+/**
+ * 离线批处理 统计
+ */
 object WordCount {
 
   def main(args: Array[String]): Unit = {
-     //生成读取环境
+     //生成读取环境 （批处理环境）
     val env= ExecutionEnvironment.getExecutionEnvironment
     //指定读取文件
     val inputPath :String  = "E:\\BIGDATAWORK\\Flink_scala\\data\\test.txt"
