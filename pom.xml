@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.flink</groupId>
+    <artifactId>Flink_scala</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+        <!--flink-scala start  使用flink框架 scala语言编写应用程序需要引入的依赖 -->
+        <!--scala 版本是 2.12  flink的版本是1.10 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-scala -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-scala_2.12</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-streaming-scala -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-scala_2.12</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+        <!--flink-scala  end -->
+    </dependencies>
+    <build>
+
+    </build>
+
+</project>
