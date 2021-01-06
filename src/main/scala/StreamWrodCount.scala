@@ -41,6 +41,7 @@ object StreamWrodCount {
     //flink 分布式架构带来的乱序问题
 
     //并行度 优先级   代码级别==>全局代码==>job 设置 ==>配置文件
+   //并行度与slots 的数量至少是相等的
 
 
 
