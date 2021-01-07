@@ -85,6 +85,8 @@ object Sourcetest {
 
     //当取消时对变量状态进行修改
     override def cancel(): Unit = running = false
+
+    //23
   }
 
 }
