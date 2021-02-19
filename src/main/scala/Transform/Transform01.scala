@@ -1,6 +1,7 @@
 package Transform
 
-import org.apache.flink.api.common.functions.ReduceFunction
+import org.apache.flink.api.common.functions.{FilterFunction, MapFunction, ReduceFunction, RichMapFunction}
+import org.apache.flink.configuration.Configuration
 import org.apache.flink.streaming.api.scala._
 
 //import _root_.SensorReading 引入另一个包中的类
@@ -27,6 +28,8 @@ object Transform01 {
         val arr = data.split(",")
         SensorReading01(arr(0), arr(1).toLong, arr(2).toDouble)
       })
+
+     //.filter(new myFilter)
 
     //1简单的聚合操作
     var aggStream = dataStream
@@ -122,3 +125,23 @@ class myReduceFunction extends ReduceFunction[SensorReading01] {
     SensorReading01(value1.id, value1.temp.max(value2.temp), value1.age.min(value2.age))
   }
 }
+
+//自定义过滤
+class  myFilter extends  FilterFunction[SensorReading01]{
+  override def filter(value: SensorReading01): Boolean =
+    value.id.startsWith("hello_1")
+}
+
+//定义Rich 类
+class  myRichMapper extends RichMapFunction[SensorReading01,String]{
+
+  override def open(parameters: Configuration): Unit =  {
+   // getRuntimeContext 生命周期  open 一般用来初始化连接池 数据等操作
+   // print(getRuntimeContext)
+  }
+
+  //每条数据做一次 MAP操作
+  override def map(value: SensorReading01): String =
+    value.id+"temp"
+}
+
