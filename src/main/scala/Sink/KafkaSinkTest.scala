@@ -3,7 +3,13 @@ package Sink
 import Transform.SensorReading01
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011
+import org.apache.flink.streaming.connectors.kafka.internals.KeyedSerializationSchemaWrapper
+import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaProducer, FlinkKafkaProducer011}
+import org.apache.flink.streaming.util.serialization.{KeyedSerializationSchema, SerializationSchema}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+
+import java.util.Properties
+import scala.collection.parallel.defaultTaskSupport.environment
 
 /**
  * 向kafka 写入数据
@@ -22,19 +28,51 @@ object KafkaSinkTest {
     val dataStream = inputDataStream
       .map(data => {
         val arr = data.split(",")
-        SensorReading01(arr(0), arr(1).toLong, arr(2).toDouble)
+        SensorReading01(arr(0), arr(1).toLong, arr(2).toDouble).toString
       })
 
-    //print 也是一个sink操作
-   /* dataStream.print()*/
-    /*val properties = new Properties()
-    properties.setProperty("bootstrap.servers", "10.20.6.98:9092")
-    properties.setProperty("group.id", "iteblog")
-    properties.setProperty("auto.offset.reset", "latest")*/
+    /*1  使用KafkaProducer 方式推送数据  val properties = new Properties()
+     properties.setProperty("bootstrap.servers", "10.20.6.98:9092")
+     properties.setProperty("group.id", "iteblog")
+     properties.setProperty("auto.offset.reset", "latest")
+     properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+     properties.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+     val producer = new KafkaProducer[String, String](properties)
+     producer.send(new ProducerRecord("test",dataStream.toString()))*/
 
+    //scala flink 中的sink 是flink三大逻辑结构之一（source，transform，sink）,功能就是负责把flink处理后的数据输出到外部系统中，
+    // flink 的sink和source的代码结构类似
+    //自定义序列化 向kafka推送数据
+    /*2 dataStream.addSink(new FlinkKafkaProducer[SensorReading01]("10.20.6.98:9092","test", new MySchema))*/
 
+    //3第三种方式没找到FlinkKafkaProducer001
 
     environment.execute("kafka sink test ...")
 
   }
+
+  /**
+   * 自定义序列化（这里可有处理）
+   */
+  class MySchema extends KeyedSerializationSchema[SensorReading01] {
+
+    //设置key
+    override def serializeKey(t: SensorReading01): Array[Byte] = t.id.getBytes()
+
+    //此方法才是实际底层produce的topic，FlinkKafkaProducer011中的topic_name级别不如此级别
+    //这个Topic 可以自定义 实现 动态传输到不同的topic，以进行数据的分类
+    override def getTargetTopic(t: SensorReading01): String = "test"
+
+    //保留原始数据 原封不动推送
+    override def serializeValue(t: SensorReading01): Array[Byte] = t.toString.getBytes
+
+    //自定义推送格式
+    /*override def serializeValue(t: SensorReading01): Array[Byte] = {
+      {"id :"+t.id+"temp:"+t.temp+""}.getBytes()
+    }*/
+  }
+
+
+
+
 }
