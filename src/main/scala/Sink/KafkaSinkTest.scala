@@ -45,8 +45,8 @@ object KafkaSinkTest {
     //自定义序列化 向kafka推送数据
     /*2 dataStream.addSink(new FlinkKafkaProducer[SensorReading01]("10.20.6.98:9092","test", new MySchema))*/
 
-    //3第三种方式没找到FlinkKafkaProducer001
-
+    //3第三种方式没找到    这个类不行FlinkKafkaProducer001
+    /*dataStream.addSink(new FlinkKafkaProducer011[String]("10.20.6.98:9092","test", new SimpleStringSchema()))*/
     environment.execute("kafka sink test ...")
 
   }
