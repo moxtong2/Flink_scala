@@ -26,7 +26,7 @@
         </dependency>
         <!--flink-scala  end -->
         <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka -->
-     <!--   <dependency>
+     <!-- <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka_2.12</artifactId>
             <version>1.10.1</version>
@@ -54,7 +54,21 @@
             <version>1.10.1</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.16</version>
+        </dependency>
 
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-jdbc -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-jdbc_2.12</artifactId>
+            <version>1.12.0</version>
+            <scope>provided</scope>
+        </dependency>
 
 
     </dependencies>
