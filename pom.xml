@@ -26,11 +26,11 @@
         </dependency>
         <!--flink-scala  end -->
         <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka -->
-        <dependency>
+     <!--   <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka_2.12</artifactId>
             <version>1.10.1</version>
-        </dependency>
+        </dependency>-->
 
         <!-- https://mvnrepository.com/artifact/org.apache.bahir/flink-connector-redis -->
         <dependency>
@@ -46,6 +46,15 @@
             <artifactId>flink-connector-elasticsearch6_2.12</artifactId>
             <version>1.11.3</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-connector-kafka-0.10 -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka-0.11_2.12</artifactId>
+            <version>1.10.1</version>
+        </dependency>
+
+
 
 
     </dependencies>

@@ -1,15 +1,11 @@
 package Sink
 
 import Transform.SensorReading01
-import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.connectors.kafka.internals.KeyedSerializationSchemaWrapper
-import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaProducer, FlinkKafkaProducer011}
-import org.apache.flink.streaming.util.serialization.{KeyedSerializationSchema, SerializationSchema}
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
-
-import java.util.Properties
-import scala.collection.parallel.defaultTaskSupport.environment
+import org.apache.flink.streaming.connectors.kafka
+import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaProducer010, FlinkKafkaProducer011}
+import org.apache.flink.streaming.util.serialization
+import org.apache.flink.streaming.util.serialization.{KeyedSerializationSchema, SerializationSchema, SimpleStringSchema}
 
 /**
  * 向kafka 写入数据
@@ -25,28 +21,53 @@ object KafkaSinkTest {
     //读取本地文件
     val inputData = "E:\\BIGDATAWORK\\Flink_scala\\data\\file.txt"
     val inputDataStream = environment.readTextFile(inputData)
+
     val dataStream = inputDataStream
       .map(data => {
         val arr = data.split(",")
         SensorReading01(arr(0), arr(1).toLong, arr(2).toDouble).toString
       })
 
-    /*1  使用KafkaProducer 方式推送数据  val properties = new Properties()
-     properties.setProperty("bootstrap.servers", "10.20.6.98:9092")
-     properties.setProperty("group.id", "iteblog")
-     properties.setProperty("auto.offset.reset", "latest")
-     properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-     properties.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
-     val producer = new KafkaProducer[String, String](properties)
-     producer.send(new ProducerRecord("test",dataStream.toString()))*/
+    /*
+     * 1 ：使用KafkaProducer 方式推送数据 ，放入的是一个对象， 需要放入之前处理一下数据结构
+     * val properties = new Properties()
+     * properties.setProperty("bootstrap.servers", "10.20.6.98:9092")
+     * properties.setProperty("group.id", "iteblog")
+     * properties.setProperty("auto.offset.reset", "latest")
+     * properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+     * properties.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
+     * val producer = new KafkaProducer[String, String](properties)
+     * producer.send(new ProducerRecord("test",dataStream.toString()))
+     */
 
-    //scala flink 中的sink 是flink三大逻辑结构之一（source，transform，sink）,功能就是负责把flink处理后的数据输出到外部系统中，
-    // flink 的sink和source的代码结构类似
-    //自定义序列化 向kafka推送数据
-    /*2 dataStream.addSink(new FlinkKafkaProducer[SensorReading01]("10.20.6.98:9092","test", new MySchema))*/
+   /*
+    * scala flink 中的sink 是flink三大逻辑结构之一（source，transform，sink）,功能就是负责把flink处理后的数据输出到外部系统中，
+    * flink 的sink和source的代码结构类似
+    * 自定义序列化 向kafka推送数据
+    * */
 
-    //3第三种方式没找到    这个类不行FlinkKafkaProducer001
-    /*dataStream.addSink(new FlinkKafkaProducer011[String]("10.20.6.98:9092","test", new SimpleStringSchema()))*/
+    /* 2： 这种方式是已经不推荐使用的一种方式 ，通过定义实现KeyedSerializationSchema
+     *   引入如下包：
+     *   <dependency>
+     *       <groupId>org.apache.flink</groupId>
+     *      <artifactId>flink-connector-kafka_2.12</artifactId>
+     *       <version>1.10.1</version>
+     *   </dependency>
+     * dataStream.addSink(new FlinkKafkaProducer[SensorReading01]("10.20.6.98:9092","test", new MySchema))
+     * */
+
+    /*
+    * 3：第三种    这类FlinkKafkaProducer010引入 如下包：
+    * 注意需要注释掉第二种方式引入的包
+    *     <dependency>
+    *         <groupId>org.apache.flink</groupId>
+    *         <artifactId>flink-connector-kafka-0.11_2.12</artifactId>
+    *         <version>1.10.1</version>
+    *     </dependency>
+    *
+    * */
+    dataStream.addSink(new FlinkKafkaProducer010[String]("10.20.6.98:9092","test", new SimpleStringSchema))
+
     environment.execute("kafka sink test ...")
 
   }

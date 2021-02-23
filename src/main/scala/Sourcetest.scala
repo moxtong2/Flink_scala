@@ -1,7 +1,18 @@
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.streaming.api.functions.source.SourceFunction
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer010
+/*import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
+*  这个是第一种实现方式
+*
+*  如下包的实现方式
+*   <!--   <dependency>
+*               <groupId>org.apache.flink</groupId>
+*               <artifactId>flink-connector-kafka_2.12</artifactId>
+*               <version>1.10.1</version>
+*           </dependency>-->
+*   FlinkKafkaConsumer010是另一种实现方式
+* */
 
 import java.util.Properties
 import scala.util.Random
@@ -43,7 +54,7 @@ object Sourcetest {
     properties.setProperty("bootstrap.servers", "10.20.6.98:9092")
     properties.setProperty("group.id", "iteblog")
     properties.setProperty("auto.offset.reset", "latest")
-    val value2 = environment.addSource(new FlinkKafkaConsumer[String]("test", new SimpleStringSchema(), properties))
+    val value2 = environment.addSource(new FlinkKafkaConsumer010[String]("test", new SimpleStringSchema(), properties))
     value2.print()
 
     //自定义数据源
